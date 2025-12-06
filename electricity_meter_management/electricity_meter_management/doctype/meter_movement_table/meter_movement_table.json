@@ -1,0 +1,104 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-12-06 22:43:27.272897",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "enable",
+  "expected",
+  "customer_no",
+  "customer_name",
+  "meter_no",
+  "prev_reading",
+  "cur_reading",
+  "consumption",
+  "subscription_fee",
+  "price",
+  "total"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "enable",
+   "fieldtype": "Check",
+   "label": "طباعة",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "expected",
+   "fieldtype": "Data",
+   "label": "متوقع",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "customer_no",
+   "fieldtype": "Data",
+   "label": "رقم العميل",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "اسم العميل",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "meter_no",
+   "fieldtype": "Data",
+   "label": "رقم العداد",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "prev_reading",
+   "fieldtype": "Float",
+   "label": "القراءة السابقة",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "cur_reading",
+   "fieldtype": "Float",
+   "label": "القراءة الحالية",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "consumption",
+   "fieldtype": "Float",
+   "label": "الاستهلاك",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "subscription_fee",
+   "fieldtype": "Currency",
+   "label": "رسوم الاشتراك",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "السعر",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "label": "الإجمالي",
+   "in_list_view": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-12-06 22:44:18.406936",
+ "modified_by": "Administrator",
+ "module": "Electricity meter management",
+ "name": "Meter Movement Table",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
