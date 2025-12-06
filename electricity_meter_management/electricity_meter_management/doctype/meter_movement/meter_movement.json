@@ -10,17 +10,20 @@
   "column_break_eyyf",
   "to_date",
   "section_break_euxu",
-  "table_xbmx"
+  "customer_table",
+  "amended_from"
  ],
  "fields": [
   {
    "fieldname": "name1",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Name"
   },
   {
    "fieldname": "from_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "From Date"
   },
   {
@@ -30,6 +33,7 @@
   {
    "fieldname": "to_date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "label": "To Date"
   },
   {
@@ -37,15 +41,26 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "table_xbmx",
+   "fieldname": "customer_table",
    "fieldtype": "Table",
    "options": "Meter Movement Table"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Meter Movement",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
+ "is_submittable": 1,
  "links": [],
- "modified": "2025-12-06 22:51:20.274897",
+ "modified": "2025-12-07 00:36:11.567135",
  "modified_by": "Administrator",
  "module": "Electricity meter management",
  "name": "Meter Movement",

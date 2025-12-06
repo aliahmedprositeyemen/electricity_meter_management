@@ -23,70 +23,70 @@
    "fieldname": "enable",
    "fieldtype": "Check",
    "in_list_view": 1,
-   "label": "enable"
+   "label": "\u0645\u062a\u0648\u0642\u0641"
   },
   {
    "fieldname": "customer_name",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Customer Name",
+   "label": "\u0627\u0633\u0645 \u0627\u0644\u0639\u0645\u064a\u0644",
    "options": "Customer"
   },
   {
    "fieldname": "meter_number",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Meter Number"
+   "label": "\u0631\u0642\u0645 \u0627\u0644\u0639\u062f\u0627\u062f"
   },
   {
    "fieldname": "previous_reading",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Previous Reading"
+   "label": "\u0627\u0644\u0642\u0631\u0627\u0621\u0629 \u0627\u0644\u0633\u0627\u0628\u0642\u0629"
   },
   {
    "fieldname": "current_reading",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Current Reading"
+   "label": "\u0627\u0644\u0642\u0631\u0627\u0621\u0629 \u0627\u0644\u062d\u0627\u0644\u064a\u0629"
   },
   {
    "fieldname": "difference",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Difference"
+   "label": "\u0627\u0644\u0627\u0633\u062a\u0647\u0644\u0627\u0643"
   },
   {
    "fieldname": "subscription_fees",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Subscription Fees"
+   "label": "\u0631\u0633\u0648\u0645 \u0627\u0644\u0627\u0634\u062a\u0631\u0627\u0643"
   },
   {
    "fieldname": "price",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Price"
+   "label": "\u0627\u0644\u0633\u0639\u0631"
   },
   {
    "fieldname": "total",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Total"
+   "label": "\u0627\u0644\u0627\u062c\u0645\u0627\u0644\u064a"
   },
   {
    "default": "0",
    "fieldname": "print",
    "fieldtype": "Check",
    "in_list_view": 1,
-   "label": "Print"
+   "label": "\u0637\u0628\u0627\u0639\u0629"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-12-06 23:12:46.214096",
+ "modified": "2025-12-07 00:41:05.377652",
  "modified_by": "Administrator",
  "module": "Electricity meter management",
  "name": "Meter Movement Table",
