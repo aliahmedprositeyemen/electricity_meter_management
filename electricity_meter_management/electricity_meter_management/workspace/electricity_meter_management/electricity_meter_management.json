@@ -1,0 +1,57 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"CCGP3FZHUw\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Electricity Meter Management</span>\",\"col\":12}},{\"id\":\"KD5wNt2EEM\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Customer\",\"col\":3}},{\"id\":\"aKvGwhm07T\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Meter Movement\",\"col\":3}},{\"id\":\"5KmpayFZBU\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Electricity Type\",\"col\":3}}]",
+ "creation": "2025-12-06 22:31:34.959724",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "color-energy-points",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Electricity Meter Management",
+ "links": [],
+ "modified": "2025-12-08 21:17:11.887841",
+ "modified_by": "Administrator",
+ "module": "Electricity meter management",
+ "name": "Electricity Meter Management",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 28.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "{}",
+   "label": "Customer",
+   "link_to": "Customer",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "{}",
+   "label": "Meter Movement",
+   "link_to": "Meter Movement",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "{}",
+   "label": "Electricity Type",
+   "link_to": "Electricity Type",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Electricity Meter Management"
+}

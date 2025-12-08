@@ -9,6 +9,7 @@
   "from_date",
   "column_break_eyyf",
   "to_date",
+  "electricity_type",
   "section_break_euxu",
   "customer_table",
   "amended_from"
@@ -54,13 +55,19 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "electricity_type",
+   "fieldtype": "Link",
+   "label": "Electricity Type",
+   "options": "Electricity Type"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-12-07 00:36:11.567135",
+ "modified": "2025-12-08 21:18:10.197919",
  "modified_by": "Administrator",
  "module": "Electricity meter management",
  "name": "Meter Movement",
