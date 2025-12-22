@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format: {\u0642\u0631\u0627\u0621\u0629 \u0627\u0644\u0639\u062f\u0627\u062f} {#######}",
  "creation": "2025-12-06 22:37:16.149279",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -67,10 +68,11 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-12-08 22:49:47.246814",
+ "modified": "2025-12-22 17:09:36.467182",
  "modified_by": "Administrator",
  "module": "Electricity meter management",
  "name": "Meter Movement",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
