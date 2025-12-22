@@ -8,8 +8,8 @@
   "name1",
   "from_date",
   "column_break_eyyf",
-  "to_date",
   "electricity_type",
+  "to_date",
   "section_break_euxu",
   "customer_table",
   "amended_from"
@@ -67,7 +67,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-12-08 21:18:10.197919",
+ "modified": "2025-12-08 22:49:47.246814",
  "modified_by": "Administrator",
  "module": "Electricity meter management",
  "name": "Meter Movement",

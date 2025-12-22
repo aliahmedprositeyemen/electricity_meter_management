@@ -8,10 +8,35 @@ from frappe.model.document import Document
 class MeterMovement(Document):
 	pass
 
+	def on_submit(self):
+		"""When Meter Movement is submitted, update Customer.custom_meter_reading
+		with the current_reading value from each child row in `customer_table`.
+		"""
+		if not getattr(self, 'customer_table', None):
+			return
+
+		for row in self.customer_table:
+			# determine customer identifier: prefer linked Customer field `customer_name`
+			cust = getattr(row, 'customer_name', None) or getattr(row, 'customer_no', None)
+			if not cust:
+				continue
+
+			cur = getattr(row, 'current_reading', None)
+			if cur is None:
+				continue
+
+			try:
+				# Update the customer's custom meter reading
+				frappe.db.set_value('Customer', cust, 'custom_meter_reading', cur, update_modified=False)
+			except Exception as e:
+				frappe.log_error(message=f"Failed updating custom_meter_reading for {cust}: {e}", title="MeterMovement.on_submit")
+
 
 @frappe.whitelist()
-def get_customers_for_meter_movement():
+def get_customers_for_meter_movement(electricity_type=None):
 	"""Return a list of customers to populate the Meter Movement child table.
+
+	Optionally filter customers by `electricity_type` if the parameter is provided.
 
 	This function returns a list of dicts with keys that map to the child table
 	fields (e.g. customer_no, customer_name, meter_no). Adjust the selected
@@ -44,10 +69,16 @@ def get_customers_for_meter_movement():
 	if prev_field:
 		fields.append(f"{prev_field} as previous_reading")
 
+	# Base filters: exclude disabled customers
+	filters = {"disabled": 0}
+	# If electricity_type is provided, add it to filters (Customer stores it as custom_electricity_type)
+	if electricity_type:
+		filters["custom_electricity_type"] = electricity_type
+
 	customers = frappe.get_all(
 		"Customer",
 		fields=fields,
-		filters={"disabled": 0},
+		filters=filters,
 		limit_page_length=500,
 	)
 
