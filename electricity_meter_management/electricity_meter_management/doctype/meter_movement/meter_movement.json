@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "name1",
+  "posting_date",
   "from_date",
   "column_break_eyyf",
   "electricity_type",
@@ -62,13 +63,18 @@
    "fieldtype": "Link",
    "label": "Electricity Type",
    "options": "Electricity Type"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-12-22 17:09:36.467182",
+ "modified": "2025-12-30 22:39:41.924095",
  "modified_by": "Administrator",
  "module": "Electricity meter management",
  "name": "Meter Movement",
@@ -85,6 +91,22 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "select": 1,
+   "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],
