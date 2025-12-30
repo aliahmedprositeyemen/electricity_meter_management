@@ -8,9 +8,11 @@
  "field_order": [
   "name1",
   "posting_date",
-  "from_date",
   "column_break_eyyf",
   "electricity_type",
+  "period_section",
+  "from_date",
+  "column_break_csfv",
   "to_date",
   "section_break_euxu",
   "customer_table",
@@ -62,19 +64,29 @@
    "fieldname": "electricity_type",
    "fieldtype": "Link",
    "label": "Electricity Type",
-   "options": "Electricity Type"
+   "options": "Electricity Type",
+   "reqd": 1
   },
   {
    "fieldname": "posting_date",
    "fieldtype": "Date",
    "label": "Posting Date"
+  },
+  {
+   "fieldname": "period_section",
+   "fieldtype": "Section Break",
+   "label": "Period Date"
+  },
+  {
+   "fieldname": "column_break_csfv",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-12-30 22:39:41.924095",
+ "modified": "2025-12-30 23:26:49.151175",
  "modified_by": "Administrator",
  "module": "Electricity meter management",
  "name": "Meter Movement",

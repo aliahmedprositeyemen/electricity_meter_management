@@ -9,7 +9,11 @@
   "name1",
   "brand",
   "manufacture_date",
-  "note"
+  "note",
+  "section_break_llpg",
+  "item_name",
+  "column_break_iaiw",
+  "price_per_kilo"
  ],
  "fields": [
   {
@@ -34,12 +38,35 @@
    "fieldname": "note",
    "fieldtype": "Long Text",
    "label": "Note"
+  },
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Name",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_llpg",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_iaiw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "price_per_kilo",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Price per kilo",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-12-08 21:04:46.572956",
+ "modified": "2025-12-30 23:17:23.509685",
  "modified_by": "Administrator",
  "module": "Electricity meter management",
  "name": "Electricity Type",

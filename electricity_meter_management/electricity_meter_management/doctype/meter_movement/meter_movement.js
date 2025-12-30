@@ -3,43 +3,69 @@
 
 frappe.ui.form.on("Meter Movement", {
     refresh(frm) {
-        if (!frm.is_new()) {
-            // Only show "جلب العملاء" when the document is not submitted (docstatus != 1)
-            if (frm.doc.docstatus !== 1) {
-                frm.add_custom_button(__('جلب العملاء'), function() {
-                    // pass electricity_type from parent form if set
-                    var elec_type = frm.doc.electricity_type || null;
-                    frappe.call({
-                        method: "electricity_meter_management.electricity_meter_management.doctype.meter_movement.meter_movement.get_customers_for_meter_movement",
-                        args: { electricity_type: elec_type },
-                        callback: function(r) {
-                            if (r.message && Array.isArray(r.message)) {
-                                frm.clear_table("customer_table");
-                                r.message.forEach(function(cust) {
-                                    let row = frm.add_child("customer_table");
-                                    // Map customer name and meter number into the child row
-                                    row.customer_name = cust.customer_name || cust.customer_full_name || '';
-                                    // Fill the child table field `meter_number` with the customer's meter
-                                    row.meter_number = cust.meter_number || '';
-                                    // Fill previous_reading in the child table from customer's custom field
-                                    row.previous_reading = cust.previous_reading || '';
-                                });
-                                frm.refresh_field("customer_table");
-                                frappe.show_alert({message: __("تمت إضافة {0} عميل", [r.message.length]), indicator: 'green'});
-                            } else {
-                                frappe.msgprint(__('لم يتم العثور على عملاء.'));
-                            }
-                        }
-                    });
-                });
-            }
+        // Show "جلب العملاء" button for new documents or documents that are not submitted
+        if (frm.doc.docstatus !== 1) {
+            frm.add_custom_button(__('جلب العملاء'), function() {
+                // Check if electricity_type is selected
+                if (!frm.doc.electricity_type) {
+                    frappe.msgprint(__('يرجى اختيار نوع الكهرباء أولاً'));
+                    return;
+                }
 
+                // pass electricity_type from parent form if set
+                var elec_type = frm.doc.electricity_type || null;
+                frappe.call({
+                    method: "electricity_meter_management.electricity_meter_management.doctype.meter_movement.meter_movement.get_customers_for_meter_movement",
+                    args: { electricity_type: elec_type },
+                    freeze: true,
+                    freeze_message: __('جاري جلب العملاء...'),
+                    callback: function(r) {
+                        if (r.message && Array.isArray(r.message)) {
+                            frm.clear_table("customer_table");
+                            r.message.forEach(function(cust) {
+                                let row = frm.add_child("customer_table");
+                                // Map customer name and meter number into the child row
+                                row.customer_name = cust.customer_name || cust.customer_full_name || '';
+                                // Fill the child table field `meter_number` with the customer's meter
+                                row.meter_number = cust.meter_number || '';
+                                // Fill previous_reading in the child table from customer's custom field
+                                row.previous_reading = cust.previous_reading || '';
+                                // Fill item_name and price from electricity type
+                                row.item_name = cust.item_name || '';
+                                row.price = cust.price_per_kilo || 0;
+                            });
+                            frm.refresh_field("customer_table");
+                            frappe.show_alert({message: __("تمت إضافة {0} عميل", [r.message.length]), indicator: 'green'});
+                        } else {
+                            frappe.msgprint(__('لم يتم العثور على عملاء.'));
+                        }
+                    }
+                });
+            });
+        }
+
+        // Show additional buttons only for saved documents
+        if (!frm.is_new()) {
             // Print button: print selected child rows (checked via `print`) or all rows
             frm.add_custom_button(__('طباعة الفواتير'), function() {
                 print_selected_rows(frm);
             });
+
+            // View Sales Invoices button (only for submitted documents)
+            if (frm.doc.docstatus === 1) {
+                frm.add_custom_button(__('عرض فواتير المبيعات'), function() {
+                    frappe.set_route("List", "Sales Invoice", {
+                        "custom_meter_movement": frm.doc.name
+                    });
+                });
+            }
         }
     },
+
+    electricity_type(frm) {
+        // Refresh buttons when electricity type changes
+        frm.trigger('refresh');
+    }
 });
 
 // Child table handlers: compute difference and total
@@ -52,6 +78,13 @@ frappe.ui.form.on('Meter Movement Table', {
     },
     price: function(frm, cdt, cdn) {
         compute_difference_and_total(frm, cdt, cdn);
+    },
+    custom_sales_invoice: function(frm, cdt, cdn) {
+        // Add click handler to open Sales Invoice
+        var row = locals[cdt][cdn];
+        if (row.custom_sales_invoice) {
+            frappe.set_route("Form", "Sales Invoice", row.custom_sales_invoice);
+        }
     }
 });
 

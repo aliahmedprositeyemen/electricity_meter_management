@@ -1,0 +1,34 @@
+{
+  "mcpServers": {
+    "figma": {
+      "url": "https://mcp.figma.com/mcp",
+      "type": "http"
+    },
+    // "delta-green": {
+    //   "url": "http://127.0.0.1:8007/api/method/delta_green_integration.mcp.handle_mcp",
+    //   "transport": "sse",
+    //   "enabled": true
+    // },
+    "electricity_meter_management": {
+      "url": "http://127.0.0.1:8002/api/method/electricity_meter_management.mcp.handle_mcp",
+      "transport": "sse",
+      "enabled": true
+    },
+
+  "Context7": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@upstash/context7-mcp"
+        ],
+        "env": {},
+        "disabled": false,
+        "autoApprove": [
+          "get-library-docs",
+          "resolve-library-id"
+        ],
+        "disabledTools": []
+      }
+  
+  }
+}

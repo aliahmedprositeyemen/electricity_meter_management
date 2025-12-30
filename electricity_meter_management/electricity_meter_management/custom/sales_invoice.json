@@ -1,0 +1,23 @@
+{
+ "custom_fields": [
+  {
+   "fieldname": "custom_meter_movement",
+   "fieldtype": "Link",
+   "label": "Meter Movement",
+   "options": "Meter Movement",
+   "insert_after": "subscription",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "custom_meter_movement_row",
+   "fieldtype": "Data",
+   "label": "Meter Movement Row",
+   "insert_after": "custom_meter_movement",
+   "read_only": 1,
+   "no_copy": 1,
+   "hidden": 1
+  }
+ ],
+ "property_setters": []
+}
