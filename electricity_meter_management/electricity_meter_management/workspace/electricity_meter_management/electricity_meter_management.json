@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "Electricity Meter Management",
  "links": [],
- "modified": "2025-12-08 21:17:11.887841",
+ "modified": "2026-01-05 18:03:18.920223",
  "modified_by": "Administrator",
  "module": "Electricity meter management",
  "name": "Electricity Meter Management",
@@ -22,7 +22,14 @@
  "parent_page": "",
  "public": 1,
  "quick_lists": [],
- "roles": [],
+ "roles": [
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Accounts User"
+  }
+ ],
  "sequence_id": 28.0,
  "shortcuts": [
   {
