@@ -5,7 +5,7 @@ frappe.ui.form.on("Meter Movement", {
     refresh(frm) {
         // Show "جلب العملاء" button for new documents or documents that are not submitted
         if (frm.doc.docstatus !== 1) {
-            frm.add_custom_button(__('جلب العملاء'), function() {
+            frm.add_custom_button(__('جلب العملاء'), function () {
                 // Check if electricity_type is selected
                 if (!frm.doc.electricity_type) {
                     frappe.msgprint(__('يرجى اختيار نوع الكهرباء أولاً'));
@@ -19,10 +19,10 @@ frappe.ui.form.on("Meter Movement", {
                     args: { electricity_type: elec_type },
                     freeze: true,
                     freeze_message: __('جاري جلب العملاء...'),
-                    callback: function(r) {
+                    callback: function (r) {
                         if (r.message && Array.isArray(r.message)) {
                             frm.clear_table("customer_table");
-                            r.message.forEach(function(cust) {
+                            r.message.forEach(function (cust) {
                                 let row = frm.add_child("customer_table");
                                 // Map customer name and meter number into the child row
                                 row.customer_name = cust.customer_name || cust.customer_full_name || '';
@@ -33,9 +33,10 @@ frappe.ui.form.on("Meter Movement", {
                                 // Fill item_name and price from electricity type
                                 row.item_name = cust.item_name || '';
                                 row.price = cust.price_per_kilo || 0;
+                                row.balance = cust.balance || 0;
                             });
                             frm.refresh_field("customer_table");
-                            frappe.show_alert({message: __("تمت إضافة {0} عميل", [r.message.length]), indicator: 'green'});
+                            frappe.show_alert({ message: __("تمت إضافة {0} عميل", [r.message.length]), indicator: 'green' });
                         } else {
                             frappe.msgprint(__('لم يتم العثور على عملاء.'));
                         }
@@ -47,13 +48,13 @@ frappe.ui.form.on("Meter Movement", {
         // Show additional buttons only for saved documents
         if (!frm.is_new()) {
             // Print button: print selected child rows (checked via `print`) or all rows
-            frm.add_custom_button(__('طباعة الفواتير'), function() {
+            frm.add_custom_button(__('طباعة الفواتير'), function () {
                 print_selected_rows(frm);
             });
 
             // View Sales Invoices button (only for submitted documents)
             if (frm.doc.docstatus === 1) {
-                frm.add_custom_button(__('عرض فواتير المبيعات'), function() {
+                frm.add_custom_button(__('عرض فواتير المبيعات'), function () {
                     frappe.set_route("List", "Sales Invoice", {
                         "custom_meter_movement": frm.doc.name
                     });
@@ -70,21 +71,24 @@ frappe.ui.form.on("Meter Movement", {
 
 // Child table handlers: compute difference and total
 frappe.ui.form.on('Meter Movement Table', {
-    current_reading: function(frm, cdt, cdn) {
+    current_reading: function (frm, cdt, cdn) {
         compute_difference_and_total(frm, cdt, cdn);
     },
-    previous_reading: function(frm, cdt, cdn) {
+    previous_reading: function (frm, cdt, cdn) {
         compute_difference_and_total(frm, cdt, cdn);
     },
-    price: function(frm, cdt, cdn) {
+    price: function (frm, cdt, cdn) {
         compute_difference_and_total(frm, cdt, cdn);
     },
-    custom_sales_invoice: function(frm, cdt, cdn) {
+    custom_sales_invoice: function (frm, cdt, cdn) {
         // Add click handler to open Sales Invoice
         var row = locals[cdt][cdn];
         if (row.custom_sales_invoice) {
             frappe.set_route("Form", "Sales Invoice", row.custom_sales_invoice);
         }
+    },
+    customer_table_remove: function (frm) {
+        calculate_totals(frm);
     }
 });
 
@@ -100,7 +104,7 @@ function compute_difference_and_total(frm, cdt, cdn) {
     // Prevent negative difference: if current < previous, set diff to 0 and show a warning
     if (diff < 0) {
         diff = 0;
-        frappe.show_alert({message: __('القراءة الحالية أصغر من القراءة السابقة — تم ضبط الفرق إلى 0'), indicator: 'yellow'});
+        frappe.show_alert({ message: __('القراءة الحالية أصغر من القراءة السابقة — تم ضبط الفرق إلى 0'), indicator: 'yellow' });
     }
 
     row.difference = isNaN(diff) ? 0 : diff;
@@ -110,10 +114,26 @@ function compute_difference_and_total(frm, cdt, cdn) {
 
     // Refresh the specific child table field
     frm.refresh_field('customer_table');
+
+    // Calculate parent totals
+    calculate_totals(frm);
+}
+
+function calculate_totals(frm) {
+    var total_consumption = 0;
+    var total_amount = 0;
+
+    (frm.doc.customer_table || []).forEach(function (row) {
+        total_consumption += parseFloat(row.difference) || 0;
+        total_amount += parseFloat(row.total) || 0;
+    });
+
+    frm.set_value('total_consumption', total_consumption);
+    frm.set_value('total', total_amount);
 }
 
 function print_selected_rows(frm) {
-    var rows = (frm.doc.customer_table || []).filter(function(r) {
+    var rows = (frm.doc.customer_table || []).filter(function (r) {
         // if child has `print` field use it to select rows, otherwise print all
         if (typeof r.print !== 'undefined') return r.print ? true : false;
         return true;
@@ -124,18 +144,18 @@ function print_selected_rows(frm) {
         return;
     }
 
-    var htmlPieces = rows.map(function(r) {
+    var htmlPieces = rows.map(function (r) {
         return generate_bill_html(r);
     });
 
     var win = window.open('', '_blank');
     var full = '<!doctype html><html lang="ar"><head><meta charset="utf-8"><title>فاتورة كهرباء</title>';
-    full += '<style>body{font-family: Arial, Tahoma, "Segoe UI", sans-serif;direction: rtl;} .bill{width:800px;margin:10px auto;border:2px solid #c00;padding:6px} .bill table{width:100%;border-collapse:collapse} .bill td, .bill th{border:1px solid #c00;padding:6px;text-align:center} .header{background:#dff0fb;font-weight:bold;font-size:18px} .big{font-size:20px;font-weight:bold} .note{color:#c00;padding:8px}</style>';
+    full += '<style>body{font-family: Arial, Tahoma, "Segoe UI", sans-serif;direction: rtl;margin:0;padding:0;} .bill{width:100%;margin:0 auto;border:2px solid #c00;padding:6px;box-sizing:border-box;} .bill table{width:100%;border-collapse:collapse} .bill td, .bill th{border:1px solid #c00;padding:6px;text-align:center} .header{background:#dff0fb;font-weight:bold;font-size:18px} .big{font-size:20px;font-weight:bold} .note{color:#c00;padding:8px} @media print { body { margin: 0; padding: 0; } .bill { width: 100%; border: 2px solid #c00; } }</style>';
     full += '</head><body>' + htmlPieces.join('<div style="page-break-after:always;"></div>') + '</body></html>';
     win.document.write(full);
     win.document.close();
     // give browser a moment to render then call print
-    setTimeout(function() { win.print(); }, 500);
+    setTimeout(function () { win.print(); }, 500);
 }
 
 function generate_bill_html(r) {

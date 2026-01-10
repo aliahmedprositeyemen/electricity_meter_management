@@ -22,6 +22,12 @@ class MeterMovement(Document):
 			if not row.item_name:
 				frappe.throw(_("Item name is required in row {0}").format(row.idx))
 
+	def before_submit(self):
+		"""Before submitting, update remarks in child table"""
+		if getattr(self, 'customer_table', None):
+			for row in self.customer_table:
+				row.remarks = f"مقابل قيمة فاتورة استهلاك {row.difference or 0} من سعر {row.price or 0}"
+
 	def on_submit(self):
 		"""When Meter Movement is submitted, update Customer.custom_meter_reading
 		and create Sales Invoices for each customer.
@@ -80,12 +86,14 @@ class MeterMovement(Document):
 			sales_invoice.customer = customer
 			sales_invoice.posting_date = self.posting_date or frappe.utils.today()
 			sales_invoice.company = company
+			sales_invoice.custom_reference_number = self.name1
 			sales_invoice.currency = frappe.db.get_value("Company", company, "default_currency")
 			sales_invoice.selling_price_list = frappe.db.get_value("Customer", customer, "default_price_list") or "Standard Selling"
 			
 			# Set reference to Meter Movement
 			sales_invoice.custom_meter_movement = self.name
 			sales_invoice.custom_meter_movement_row = row.name
+			sales_invoice.remarks = row.remarks
 
 			# Add item to Sales Invoice
 			sales_invoice.append("items", {
@@ -241,12 +249,47 @@ def get_customers_for_meter_movement(electricity_type=None):
 
 	# Ensure returned customers have both keys (empty string if not present)
 	# and add electricity type data to each customer
+	customer_names = [c["customer_name"] for c in customers if c.get("customer_name")]
+	
+	# Fetch balances
+	customer_balances = {}
+	if customer_names:
+		placeholders = ', '.join(['%s'] * len(customer_names))
+		# Assuming standard GL Entry structure: party_type='Customer', party=customer_name
+		# posted=1 means submitted entries
+		query = f"""
+			SELECT party, sum(debit - credit) as balance
+			FROM `tabGL Entry`
+			WHERE party_type = 'Customer'
+			  AND party IN ({placeholders})
+			  AND is_cancelled = 0
+			GROUP BY party
+		"""
+		# Some old versions might verify 'posted' instead of is_cancelled, but 'is_cancelled=0' is safer for all submitted.
+		# Ideally check docstatus=1.
+		
+		# Let's use get_all or sql with docstatus=1 check which is standard
+		query = f"""
+			SELECT party, sum(debit - credit) as balance
+			FROM `tabGL Entry`
+			WHERE party_type = 'Customer'
+			  AND party IN ({placeholders})
+			  AND docstatus = 1
+			GROUP BY party
+		"""
+		
+		results = frappe.db.sql(query, tuple(customer_names), as_dict=True)
+		for r in results:
+			customer_balances[r.party] = r.balance
+
 	for c in customers:
 		c["meter_number"] = c.get("meter_number") or ""
 		c["previous_reading"] = c.get("previous_reading") or ""
 		# Add electricity type data
 		c["item_name"] = electricity_type_data.get("item_name", "")
 		c["price_per_kilo"] = electricity_type_data.get("price_per_kilo", 0)
+		# Add balance
+		c["balance"] = customer_balances.get(c["customer_name"], 0.0)
 
 	return customers
 

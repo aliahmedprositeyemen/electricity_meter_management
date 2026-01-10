@@ -17,7 +17,9 @@
   "total",
   "print",
   "item_name",
-  "custom_sales_invoice"
+  "custom_sales_invoice",
+  "remarks",
+  "balance"
  ],
  "fields": [
   {
@@ -97,13 +99,23 @@
    "label": "Sales Invoice",
    "options": "Sales Invoice",
    "read_only": 1
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "balance",
+   "fieldtype": "Float",
+   "label": "balance"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-12-31 02:07:34.853729",
+ "modified": "2026-01-10 22:08:56.141957",
  "modified_by": "Administrator",
  "module": "Electricity meter management",
  "name": "Meter Movement Table",

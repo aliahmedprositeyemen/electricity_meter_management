@@ -10,13 +10,18 @@
   "posting_date",
   "column_break_eyyf",
   "electricity_type",
+  "company",
   "period_section",
   "from_date",
   "column_break_csfv",
   "to_date",
   "section_break_euxu",
   "customer_table",
-  "amended_from"
+  "amended_from",
+  "section_break_orcd",
+  "total",
+  "column_break_chwl",
+  "total_consumption"
  ],
  "fields": [
   {
@@ -80,13 +85,37 @@
   {
    "fieldname": "column_break_csfv",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "section_break_orcd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Float",
+   "label": "\u0627\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u0645\u0628\u0644\u063a"
+  },
+  {
+   "fieldname": "column_break_chwl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_consumption",
+   "fieldtype": "Float",
+   "label": "\u0627\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u0627\u0633\u062a\u0647\u0644\u0627\u0643"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-12-30 23:26:49.151175",
+ "modified": "2026-01-10 20:51:14.053560",
  "modified_by": "Administrator",
  "module": "Electricity meter management",
  "name": "Meter Movement",
