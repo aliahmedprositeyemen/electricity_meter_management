@@ -173,17 +173,21 @@ function generate_bill_html(r) {
     var diff = (typeof r.difference !== 'undefined') ? r.difference : '';
     var price = (typeof r.price !== 'undefined') ? r.price : '';
     var total = (typeof r.total !== 'undefined') ? r.total : '';
+    var balance = (typeof r.balance !== 'undefined') ? r.balance : 0;
+    var total_all = (typeof r.total_all !== 'undefined') ? r.total_all : 0;
     var subscription = (typeof r.subscription_fees !== 'undefined') ? r.subscription_fees : '';
 
     var html = '<div class="bill">';
     html += '<table>';
-    html += '<tr><td class="header" colspan="3">فاتورة كهرباء</td><td class="header">محطة الفقيه فرع الكهرباء والمياه</td></tr>';
+    html += '<tr><td class="header" colspan="4">فاتورة كهرباء</td></tr>';
+    html += '<tr><td colspan="4" class="header">محطة الفقيه فرع الكهرباء والمياه</td></tr>';
     html += '<tr><td>رقم المشترك</td><td class="big">' + (r.customer_no || '') + '</td><td>رقم العداد</td><td>' + meter_no + '</td></tr>';
     html += '<tr><td>اسم المشترك</td><td colspan="3">' + customer_name + '</td></tr>';
     html += '<tr><th>السابقة</th><th>الحالية</th><th>فارق القراءة</th><th>قيمة الاستهلاك</th></tr>';
     html += '<tr><td>' + prev + '</td><td>' + cur + '</td><td>' + diff + '</td><td>' + (Number(diff || 0) * Number(price || 0)) + '</td></tr>';
     html += '<tr><td>رسوم الإشتراك</td><td>' + subscription + '</td><td>السعر</td><td>' + price + '</td></tr>';
-    html += '<tr><td colspan="3">إجمالي المبلغ المستحق</td><td class="big">' + total + '</td></tr>';
+    html += '<tr><td>المتاخرات</td><td>' + balance + '</td><td>قيمة الفاتورة</td><td>' + total + '</td></tr>';
+    html += '<tr><td colspan="3">اجمالي المستحق</td><td class="big">' + total_all + '</td></tr>';
     html += '</table>';
     html += '<div class="note">تنبيه: يرجى التسديد خلال يومين من استلام الفاتورة</div>';
     html += '</div>';
