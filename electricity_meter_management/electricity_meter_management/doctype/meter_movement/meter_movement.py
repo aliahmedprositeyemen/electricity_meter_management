@@ -53,7 +53,7 @@ class MeterMovement(Document):
 						UPDATE `tabMeter Movement Table`
 						SET custom_sales_invoice = NULL
 						WHERE name = %s
-					""", (row.name))
+					""", (row.name,))
 					
 					try:
 						# 2. Force Break Link from Sales Invoice -> Meter Movement using SQL
@@ -61,10 +61,11 @@ class MeterMovement(Document):
 							UPDATE `tabSales Invoice`
 							SET custom_meter_movement = NULL, custom_meter_movement_row = NULL
 							WHERE name = %s
-						""", (sales_invoice_name))
+						""", (sales_invoice_name,))
 
 						if frappe.db.get_value("Sales Invoice", sales_invoice_name, "docstatus") == 1:
 							si = frappe.get_doc("Sales Invoice", sales_invoice_name)
+							si.ignore_links = True
 							si.flags.ignore_links = True
 							si.flags.ignore_validate = True
 							si.cancel()
