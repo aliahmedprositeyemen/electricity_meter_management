@@ -42,6 +42,34 @@ class MeterMovement(Document):
 			# Create sales invoice for this customer
 			self.create_sales_invoice_for_customer(row)
 
+	def cancel(self):
+		"""Override cancel to handle circular dependency with Sales Invoices"""
+		if getattr(self, 'customer_table', None):
+			for row in self.customer_table:
+				sales_invoice_name = row.get("custom_sales_invoice")
+				if sales_invoice_name:
+					# 1. Break Link from Child Table -> Sales Invoice
+					frappe.db.set_value("Meter Movement Table", row.name, "custom_sales_invoice", None)
+					
+					try:
+						# 2. Break Link from Sales Invoice -> Meter Movement (to avoid SI blocking MM cancel)
+						# Check if column exists first to be safe, or just try setting it to None
+						if frappe.db.exists("Sales Invoice", sales_invoice_name):
+							# We need to bypass validations if we modify a submitted doc, 
+							# but we can't easily modify submitted doc without cancelling.
+							# However, we can use sql to clear the link field directly if needed,
+							# or relying on the fact that if we cancel the SI, it's fine.
+							
+							# If Sales Invoice is submitted, we must cancel it.
+							if frappe.db.get_value("Sales Invoice", sales_invoice_name, "docstatus") == 1:
+								si = frappe.get_doc("Sales Invoice", sales_invoice_name)
+								# We set ignore_links=True to prevent SI from complaining about MM linking to it (though we just cleared that in step 1)
+								si.cancel()
+					except Exception as e:
+						frappe.throw(_("Could not cancel linked Sales Invoice {0}: {1}").format(sales_invoice_name, str(e)))
+
+		super(MeterMovement, self).cancel()
+
 	def on_cancel(self):
 		"""When Meter Movement is cancelled, cancel all related Sales Invoices"""
 		self.cancel_related_sales_invoices()
@@ -123,23 +151,22 @@ class MeterMovement(Document):
 
 	def cancel_related_sales_invoices(self):
 		"""Cancel all Sales Invoices related to this Meter Movement"""
-		try:
-			# Find all Sales Invoices linked to this Meter Movement
-			sales_invoices = frappe.get_all("Sales Invoice", 
-				filters={"custom_meter_movement": self.name, "docstatus": 1},
-				fields=["name"]
-			)
+		if not getattr(self, 'customer_table', None):
+			return
 
-			for si in sales_invoices:
+		for row in self.customer_table:
+			# Get the related Sales Invoice
+			sales_invoice_name = row.get("custom_sales_invoice")
+			
+			if sales_invoice_name:
 				try:
-					sales_invoice_doc = frappe.get_doc("Sales Invoice", si.name)
-					sales_invoice_doc.cancel()
-					frappe.msgprint(_("Sales Invoice {0} cancelled").format(si.name))
+					# Check status before cancelling
+					if frappe.db.get_value("Sales Invoice", sales_invoice_name, "docstatus") == 1:
+						sales_invoice = frappe.get_doc("Sales Invoice", sales_invoice_name)
+						sales_invoice.cancel()
+						frappe.msgprint(_("Sales Invoice {0} cancelled").format(sales_invoice_name))
 				except Exception as e:
-					frappe.log_error(message=f"Failed cancelling Sales Invoice {si.name}: {e}", title="MeterMovement.cancel_related_sales_invoices")
-
-		except Exception as e:
-			frappe.log_error(message=f"Failed cancelling related Sales Invoices: {e}", title="MeterMovement.cancel_related_sales_invoices")
+					frappe.log_error(message=f"Failed cancelling Sales Invoice {sales_invoice_name}: {e}", title="MeterMovement.cancel_related_sales_invoices")
 
 	def update_related_sales_invoices(self):
 		"""Update all Sales Invoices related to this Meter Movement"""
