@@ -48,23 +48,26 @@ class MeterMovement(Document):
 			for row in self.customer_table:
 				sales_invoice_name = row.get("custom_sales_invoice")
 				if sales_invoice_name:
-					# 1. Break Link from Child Table -> Sales Invoice
-					frappe.db.set_value("Meter Movement Table", row.name, "custom_sales_invoice", None)
+					# 1. Force Break Link from Child Table -> Sales Invoice using SQL
+					frappe.db.sql("""
+						UPDATE `tabMeter Movement Table`
+						SET custom_sales_invoice = NULL
+						WHERE name = %s
+					""", (row.name))
 					
 					try:
-						# 2. Break Link from Sales Invoice -> Meter Movement (to avoid SI blocking MM cancel)
-						# Check if column exists first to be safe, or just try setting it to None
-						if frappe.db.exists("Sales Invoice", sales_invoice_name):
-							# We need to bypass validations if we modify a submitted doc, 
-							# but we can't easily modify submitted doc without cancelling.
-							# However, we can use sql to clear the link field directly if needed,
-							# or relying on the fact that if we cancel the SI, it's fine.
-							
-							# If Sales Invoice is submitted, we must cancel it.
-							if frappe.db.get_value("Sales Invoice", sales_invoice_name, "docstatus") == 1:
-								si = frappe.get_doc("Sales Invoice", sales_invoice_name)
-								# We set ignore_links=True to prevent SI from complaining about MM linking to it (though we just cleared that in step 1)
-								si.cancel()
+						# 2. Force Break Link from Sales Invoice -> Meter Movement using SQL
+						frappe.db.sql("""
+							UPDATE `tabSales Invoice`
+							SET custom_meter_movement = NULL, custom_meter_movement_row = NULL
+							WHERE name = %s
+						""", (sales_invoice_name))
+
+						if frappe.db.get_value("Sales Invoice", sales_invoice_name, "docstatus") == 1:
+							si = frappe.get_doc("Sales Invoice", sales_invoice_name)
+							si.flags.ignore_links = True
+							si.flags.ignore_validate = True
+							si.cancel()
 					except Exception as e:
 						frappe.throw(_("Could not cancel linked Sales Invoice {0}: {1}").format(sales_invoice_name, str(e)))
 
