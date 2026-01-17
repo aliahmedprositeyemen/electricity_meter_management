@@ -68,15 +68,44 @@ class MeterMovement(Document):
 							si.ignore_links = True
 							si.flags.ignore_links = True
 							si.flags.ignore_validate = True
+							# Avoid recursive loop if SI tries to update MM
+							si.flags.from_meter_movement_cancel = True 
 							si.cancel()
 					except Exception as e:
-						frappe.throw(_("Could not cancel linked Sales Invoice {0}: {1}").format(sales_invoice_name, str(e)))
+						# If cancellation fails, we still want to allow this document to be cancelled if possible,
+						# but ideally we should rollback. However, since we already broke links, we might leave orphans.
+						# For now, we throw to let the user know, but give a clear message.
+						frappe.throw(_("Could not cancel linked Sales Invoice {0}. Error: {1}").format(sales_invoice_name, str(e)))
 
 		super(MeterMovement, self).cancel()
 
 	def on_cancel(self):
-		"""When Meter Movement is cancelled, cancel all related Sales Invoices"""
+		"""When Meter Movement is cancelled, cancel all related Sales Invoices and revert readings"""
 		self.cancel_related_sales_invoices()
+		self.revert_all_customer_meter_readings()
+
+	def revert_all_customer_meter_readings(self):
+		"""Revert all customers' meter readings to previous values"""
+		if not getattr(self, 'customer_table', None):
+			return
+
+		for row in self.customer_table:
+			self.revert_customer_meter_reading(row)
+
+	def revert_customer_meter_reading(self, row):
+		"""Revert customer's meter reading to previous value"""
+		cust = getattr(row, 'customer_name', None) or getattr(row, 'customer_no', None)
+		if not cust:
+			return
+
+		# Revert to previous reading
+		prev = getattr(row, 'previous_reading', 0)
+		
+		try:
+			# Update the customer's custom meter reading
+			frappe.db.set_value('Customer', cust, 'custom_meter_reading', prev, update_modified=False)
+		except Exception as e:
+			frappe.log_error(message=f"Failed reverting custom_meter_reading for {cust}: {e}", title="MeterMovement.revert_customer_meter_reading")
 
 	def on_update_after_submit(self):
 		"""When Meter Movement is updated after submit, update related Sales Invoices"""
