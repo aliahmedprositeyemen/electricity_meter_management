@@ -80,6 +80,9 @@ frappe.ui.form.on('Meter Movement Table', {
     price: function (frm, cdt, cdn) {
         compute_difference_and_total(frm, cdt, cdn);
     },
+    balance: function (frm, cdt, cdn) {
+        compute_difference_and_total(frm, cdt, cdn);
+    },
     custom_sales_invoice: function (frm, cdt, cdn) {
         // Add click handler to open Sales Invoice
         var row = locals[cdt][cdn];
@@ -111,6 +114,10 @@ function compute_difference_and_total(frm, cdt, cdn) {
 
     var total = (row.difference || 0) * price;
     row.total = isNaN(total) ? 0 : total;
+
+    // Calculate total_all
+    var balance = parseFloat(row.balance) || 0;
+    row.total_all = row.total + balance;
 
     // Refresh the specific child table field
     frm.refresh_field('customer_table');
