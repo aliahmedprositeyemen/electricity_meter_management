@@ -26,7 +26,7 @@ class MeterMovement(Document):
 		"""Before submitting, update remarks in child table"""
 		if getattr(self, 'customer_table', None):
 			for row in self.customer_table:
-				row.remarks = f"مقابل قيمة فاتورة استهلاك {row.difference or 0} من سعر {row.price or 0}"
+				row.remarks = f"مقابل قيمة فاتورة استهلاك {row.difference or 0} من سعر {row.price or 0} للعميل {row.customer_name or 0}"
 
 	def on_submit(self):
 		"""When Meter Movement is submitted, update Customer.custom_meter_reading
