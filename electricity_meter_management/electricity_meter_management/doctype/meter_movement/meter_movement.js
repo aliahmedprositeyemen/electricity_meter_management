@@ -152,7 +152,7 @@ function print_selected_rows(frm) {
     }
 
     var htmlPieces = rows.map(function (r) {
-        return generate_bill_html(r);
+        return generate_bill_html(r, frm.doc);
     });
 
     var win = window.open('', '_blank');
@@ -165,7 +165,7 @@ function print_selected_rows(frm) {
     setTimeout(function () { win.print(); }, 500);
 }
 
-function generate_bill_html(r) {
+function generate_bill_html(r, parent) {
     var customer_name = r.customer_name || '';
     var meter_no = r.meter_number || r.meter_no || '';
     var prev = (typeof r.previous_reading !== 'undefined') ? r.previous_reading : '';
@@ -179,8 +179,16 @@ function generate_bill_html(r) {
 
     var html = '<div class="bill">';
     html += '<table>';
-    html += '<tr><td class="header" colspan="4">فاتورة كهرباء</td></tr>';
-    html += '<tr><td colspan="4" class="header">محطة الفقيه فرع الكهرباء والمياه</td></tr>';
+    html += '<tr>' +
+        '<td class="header" colspan="2" style="text-align: right;">فاتورة كهرباء (محطة الفقيه)</td>' +
+        '<td class="header" colspan="2" style="text-align: left; font-size: 14px;">تاريخ الإصدار: ' + (parent.posting_date || '') + '</td>' +
+        '</tr>';
+    html += '<tr>' +
+        '<td colspan="4" style="background: #f9f9f9; padding: 8px;">' +
+        'للفترة من تاريخ: <b>' + (parent.from_date || '') + '</b> إلى تاريخ: <b>' + (parent.to_date || '') + '</b>' +
+        '</td>' +
+        '</tr>';
+
     html += '<tr><td>رقم المشترك</td><td class="big">' + (r.customer_no || '') + '</td><td>رقم العداد</td><td>' + meter_no + '</td></tr>';
     html += '<tr><td>اسم المشترك</td><td colspan="3">' + customer_name + '</td></tr>';
     html += '<tr><th>السابقة</th><th>الحالية</th><th>فارق القراءة</th><th>قيمة الاستهلاك</th></tr>';
