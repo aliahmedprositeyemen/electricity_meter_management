@@ -1,7 +1,7 @@
 frappe.ui.form.on('Journal Entry', {
     refresh: function (frm) {
         // Hide "Duplicate" menu for users without the "Accounts Manager" role
-        if (!frappe.user.has_role("Accounts Manager")) {
+        if (!frappe.user.has_role("مشرف محطة")) {
             frm.meta.allow_copy = 1;
         } else {
             frm.meta.allow_copy = 0;
